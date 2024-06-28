@@ -1,13 +1,18 @@
-# SRB2Kart: Saturn 32 Player Build
+# SRB2Kart: Ultimax
 
 [SRB2Kart](https://srb2.org/mods/) is a kart racing mod based on the 3D Sonic the Hedgehog fangame [Sonic Robo Blast 2](https://srb2.org/), based on a modified version of [Doom Legacy](http://doomlegacy.sourceforge.net/).
 
-##Features (Saturn 32 Player Branch)
+This is a custom version of Saturn 32p with some more features
+
+## Features (Ultimax)
 Support for up to 32 Players
 
 Extra Skin colors
 
-And much more!
+65534 Skin slots
+
+4096 freelslots
+
 
 Everything Saturn client also has See: https://github.com/Indev450/SRB2Kart-Saturn
 
