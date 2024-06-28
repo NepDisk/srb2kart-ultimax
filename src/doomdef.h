@@ -126,9 +126,15 @@ extern char  logfilename[1024];
 // we use comprevision and compbranch instead.
 #else
 #define VERSION    1 // Game version
-#define SUBVERSION 68 // more precise version number
-#define VERSIONSTRING "Saturn - 32p v1.5"
-#define VERSIONSTRINGW L"Saturn - 32p v1.5"
+#define SUBVERSION 32 // more precise version number
+#ifndef USE_FBO_OGL
+#define VERSIONSTRING "Ultimax 1.0 "
+#define VERSIONSTRINGW L"Ultimax 1.0"
+#else
+#define VERSIONSTRING "Ultimax 1.0 - FBO "
+#define VERSIONSTRINGW L"Ultimax 1.0 - FBO"
+#endif
+// Hey! I
 
 // Hey! If you change this, add 1 to the MODVERSION below! Otherwise we can't force updates!
 // And change CMakeLists.txt (not src/, but in root), for CMake users!
@@ -206,7 +212,7 @@ extern char  logfilename[1024];
 // NOTE: it needs more than this to increase the number of players...
 
 #define MAXPLAYERS 32
-#define MAXSKINS 383
+#define MAXSKINS UINT16_MAX-1
 #define MAXLOCALSKINS 32
 #define PLAYERSMASK (MAXPLAYERS-1)
 #define MAXPLAYERNAME 21
