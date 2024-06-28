@@ -28,6 +28,8 @@ state_t *astate;
 
 boolean actionsoverridden[NUMACTIONS] = {false};
 
+boolean actionsoverridden[NUMACTIONS] = {false};
+
 //
 // Sprite Names
 //
