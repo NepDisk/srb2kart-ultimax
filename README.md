@@ -6,15 +6,15 @@ This is a custom version of Saturn 32p with some more features
 
 ## Features (Ultimax)
 Support for up to 32 Players
-
 Extra Skin colors
 
 65534 Skin slots
 
 4096 freelslots
 
-
 Everything Saturn client also has See: https://github.com/Indev450/SRB2Kart-Saturn
+
+And much more!
 
 ## Dependencies
 - SDL2 (Linux/OS X only)
