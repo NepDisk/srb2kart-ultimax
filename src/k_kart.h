@@ -33,6 +33,8 @@ extern consvar_t cv_stat_yoffset;
 extern consvar_t cv_showstats;
 extern consvar_t cv_showlaptimes;
 extern consvar_t cv_battlespeedo;
+extern consvar_t cv_multiitemicon;
+extern consvar_t cv_alwaysshowitemstacks;
 
 #define NUMSPEEDOSTUFF 6
 extern CV_PossibleValue_t speedo_cons_t[NUMSPEEDOSTUFF];

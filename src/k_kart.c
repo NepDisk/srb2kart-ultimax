@@ -102,6 +102,10 @@ consvar_t cv_biglaps = {"biglaphud", "On", CV_SAVE, CV_OnOff, NULL, 0, NULL, NUL
 
 consvar_t cv_battlespeedo = {"battlespeedo", "Off", CV_SAVE, CV_OnOff, NULL, 0, NULL, NULL, 0, 0, NULL}; //toggle for showing the speedometer in battlemode
 
+consvar_t cv_multiitemicon = {"multiitemicon", "Off", CV_SAVE, CV_OnOff, NULL, 0, NULL, NULL, 0, 0, NULL};
+
+consvar_t cv_alwaysshowitemstacks = {"alwaysshowitemstacks", "Off", CV_SAVE, CV_OnOff, NULL, 0, NULL, NULL, 0, 0, NULL};
+
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
 // franticitems is Frantic Mode items, bool
@@ -1075,7 +1079,11 @@ void K_RegisterKartStuff(void)
 	CV_RegisterVar(&cv_lessflicker);
 	
 	CV_RegisterVar(&cv_mouseturn);
-
+	
+	CV_RegisterVar(&cv_newwatersplash);
+	
+	CV_RegisterVar(&cv_multiitemicon);
+	CV_RegisterVar(&cv_alwaysshowitemstacks);
 }
 
 //}
@@ -7362,12 +7370,15 @@ static patch_t *kp_itemmulsticker[2];
 static patch_t *kp_itemx;
 
 static patch_t *kp_sneaker[2];
+static patch_t *kp_multsneaker[2];
 static patch_t *kp_rocketsneaker[2];
 static patch_t *kp_invincibility[13];
 static patch_t *kp_banana[2];
+static patch_t *kp_multbanana[3];
 static patch_t *kp_eggman[2];
 static patch_t *kp_orbinaut[5];
 static patch_t *kp_jawz[2];
+static patch_t *kp_multjawz[1];
 static patch_t *kp_mine[2];
 static patch_t *kp_ballhog[2];
 static patch_t *kp_selfpropelledbomb[2];
@@ -7539,6 +7550,17 @@ void K_LoadKartHUDGraphics(void)
 		driftgaugesmall =  W_CachePatchName("K_DGSU", PU_HUDGFX);
 		driftgaugesmallcolor =  W_CachePatchName("K_DCSU", PU_HUDGFX);
 	}
+	
+	if (multipleitemicons)
+	{
+		kp_multsneaker[0] = W_CachePatchName("K_ITSHO2", PU_HUDGFX);
+		kp_multsneaker[1] = W_CachePatchName("K_ITSHO3", PU_HUDGFX);
+		kp_multbanana[0] = W_CachePatchName("K_ITBAN2", PU_HUDGFX);
+		kp_multbanana[1] = W_CachePatchName("K_ITBAN3", PU_HUDGFX);
+		kp_multbanana[2] = W_CachePatchName("K_ITBAN4", PU_HUDGFX);
+		kp_multjawz[0] = W_CachePatchName("K_ITJAW2", PU_HUDGFX);
+	}
+	
 
 	// Starting countdown
 	kp_startcountdown[0] = 		W_CachePatchName("K_CNT3A", PU_HUDGFX);
@@ -8211,7 +8233,7 @@ static void K_drawKartItem(void)
 	patch_t *localinv = ((offset) ? kp_invincibility[((leveltime % (6*3)) / 3) + 7] : kp_invincibility[(leveltime % (7*3)) / 3]);
 	INT32 fx = 0, fy = 0, fflags = 0;	// final coords for hud and flags...
 	//INT32 splitflags = K_calcSplitFlags(V_SNAPTOTOP|V_SNAPTOLEFT);
-	const INT32 numberdisplaymin = ((!offset && stplyr->kartstuff[k_itemtype] == KITEM_ORBINAUT) ? 5 : 2);
+	INT32 numberdisplaymin = 2; // No longer a constant so other things can modify this value
 	INT32 itembar = 0;
 	INT32 maxl = 0; // itembar's normal highest value
 	const INT32 barlength = (splitscreen > 1 ? 12 : 26);
@@ -8360,62 +8382,152 @@ static void K_drawKartItem(void)
 			switch(stplyr->kartstuff[k_itemtype])
 			{
 				case KITEM_SNEAKER:
-					localpatch = kp_sneaker[offset];
+					if (cv_multiitemicon.value && multipleitemicons)
+					{
+						if (offset)
+						{
+							numberdisplaymin = 2;
+							localpatch = kp_sneaker[offset];
+						}
+						else
+						{
+							numberdisplaymin = 4;						
+							switch(stplyr->kartstuff[k_itemamount])
+							{
+								case 1:
+									localpatch = kp_sneaker[offset];
+									break;
+								case 2:
+									localpatch = kp_multsneaker[0];
+									break;
+								default:
+									localpatch = kp_multsneaker[1];
+									break;
+							}
+						}
+
+					}
+					else
+					{
+						numberdisplaymin = 2;
+						localpatch = kp_sneaker[offset];
+					}
 					break;
 				case KITEM_ROCKETSNEAKER:
+					numberdisplaymin = 2;
 					localpatch = kp_rocketsneaker[offset];
 					break;
 				case KITEM_INVINCIBILITY:
+					numberdisplaymin = 2;
 					localpatch = localinv;
 					dark = true;
 					break;
 				case KITEM_BANANA:
-					localpatch = kp_banana[offset];
+					if (cv_multiitemicon.value && multipleitemicons)
+					{
+						numberdisplaymin = 4;						
+						switch(stplyr->kartstuff[k_itemamount])
+						{
+							case 1:
+								localpatch = kp_banana[offset];
+								break;
+							case 2:
+								localpatch = kp_multbanana[0];
+								break;
+							case 10:
+								localpatch = kp_multbanana[2];
+								break;
+							default:
+								localpatch = kp_multbanana[1];
+								break;
+						}
+					}
+					else
+					{
+						numberdisplaymin = 2;
+						localpatch = kp_banana[offset];
+					}
 					break;
 				case KITEM_EGGMAN:
+					numberdisplaymin = 2;
 					localpatch = kp_eggman[offset];
 					break;
 				case KITEM_ORBINAUT:
+					if (offset)
+						numberdisplaymin = 2;
+					else
+						numberdisplaymin = 5;
+					
 					localpatch = kp_orbinaut[(offset ? 4 : min(stplyr->kartstuff[k_itemamount]-1, 3))];
 					break;
 				case KITEM_JAWZ:
-					localpatch = kp_jawz[offset];
+					if (cv_multiitemicon.value && multipleitemicons)
+					{
+						numberdisplaymin = 3;						
+						switch(stplyr->kartstuff[k_itemamount])
+						{
+							case 1:
+								localpatch = kp_jawz[offset];
+								break;
+							default:
+								localpatch = kp_multjawz[0];
+								break;
+						}
+					}
+					else
+					{
+						numberdisplaymin = 2;
+						localpatch = kp_jawz[offset];
+					}
 					break;
 				case KITEM_MINE:
+					numberdisplaymin = 2;
 					localpatch = kp_mine[offset];
 					break;
 				case KITEM_BALLHOG:
+					numberdisplaymin = 2;
 					localpatch = kp_ballhog[offset];
 					break;
 				case KITEM_SPB:
+					numberdisplaymin = 2;
 					localpatch = kp_selfpropelledbomb[offset];
 					dark = true;
 					break;
 				case KITEM_GROW:
+					numberdisplaymin = 2;
 					localpatch = kp_grow[offset];
 					break;
 				case KITEM_SHRINK:
+					numberdisplaymin = 2;
 					localpatch = kp_shrink[offset];
 					break;
 				case KITEM_THUNDERSHIELD:
+					numberdisplaymin = 2;
 					localpatch = kp_thundershield[offset];
 					dark = true;
 					break;
 				case KITEM_HYUDORO:
+					numberdisplaymin = 2;
 					localpatch = kp_hyudoro[offset];
 					break;
 				case KITEM_POGOSPRING:
+					numberdisplaymin = 2;
 					localpatch = kp_pogospring[offset];
 					break;
 				case KITEM_KITCHENSINK:
+					numberdisplaymin = 2;
 					localpatch = kp_kitchensink[offset];
 					break;
 				case KITEM_SAD:
+					numberdisplaymin = 2;
 					localpatch = kp_sadface[offset];
 					break;
 				default:
 					return;
 			}
+			
+			if (cv_alwaysshowitemstacks.value)
+				numberdisplaymin = 2;
 
 			if (stplyr->kartstuff[k_itemheld] && !(leveltime & 1))
 				localpatch = kp_nodraw;
@@ -8461,7 +8573,7 @@ static void K_drawKartItem(void)
 		V_DrawMappedPatch(fx + (flipamount ? 48 : 0), fy, V_HUDTRANS|fflags|(flipamount ? V_FLIP : 0), localbg, colormap); // flip this graphic for p2 and p4 in split and shift it.
 		V_DrawFixedPatch(fx<<FRACBITS, fy<<FRACBITS, FRACUNIT, V_HUDTRANS|fflags, localpatch, colmap);
 		if (offset)
-			if (flipamount) // reminder that this is for 3/4p's right end of the screen.
+			if (flipamount) // reminder that this is for 3/4p's right ends of the screen.
 				V_DrawString(fx+2, fy+31, V_ALLOWLOWERCASE|V_HUDTRANS|fflags, va("x%d", stplyr->kartstuff[k_itemamount]));
 			else
 				V_DrawString(fx+24, fy+31, V_ALLOWLOWERCASE|V_HUDTRANS|fflags, va("x%d", stplyr->kartstuff[k_itemamount]));

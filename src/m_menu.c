@@ -2150,10 +2150,15 @@ static menuitem_t OP_SaturnMenu[] =
 	{IT_STRING | IT_CVAR, NULL, "Keyboard Layout",						&cv_keyboardlayout,   	   	 45},
 
 	{IT_STRING | IT_CVAR, NULL, "Less Midnight Channel Flicker", 		&cv_lessflicker, 		   	 55},
+	
+	{IT_STRING | IT_CVAR, NULL, "Extra Item icons", 					&cv_multiitemicon, 			 65},
+	{IT_STRING | IT_CVAR, NULL, "Always Show Item Amount", 				&cv_alwaysshowitemstacks, 	 70},
+	
+	{IT_STRING | IT_CVAR, NULL, "New water splash", 					&cv_newwatersplash, 	 	 80},
 
-	{IT_SUBMENU|IT_STRING,	NULL,	"Saturn Hud...", 					&OP_SaturnHudDef,		   	 65},
-	{IT_SUBMENU|IT_STRING,	NULL,	"Sprite Distortion...", 			&OP_PlayerDistortDef,	   	 70},
-	{IT_SUBMENU|IT_STRING,	NULL,	"Saturn Credits", 					&OP_SaturnCreditsDef,	   	 80}, // uwu
+	{IT_SUBMENU|IT_STRING,	NULL,	"Saturn Hud...", 					&OP_SaturnHudDef,		   	 90},
+	{IT_SUBMENU|IT_STRING,	NULL,	"Sprite Distortion...", 			&OP_PlayerDistortDef,	   	 95},
+	{IT_SUBMENU|IT_STRING,	NULL,	"Saturn Credits", 					&OP_SaturnCreditsDef,	   	 100}, // uwu
 };
 
 static const char* OP_SaturnTooltips[] =
@@ -2165,6 +2170,9 @@ static const char* OP_SaturnTooltips[] =
 	"Force menu to only use uppercase.",
 	"Use your desired Keyboard Layout for Text Input\nthis is either the Default, Native or Azerty\nNative does not affect Gameplay only Text!",
 	"Disables the flicker effect on Midnight Channel.",
+	"Show extra multi-item graphics for Sneakers, Bananas and Jawz.",
+	"Always Show item Amount.",
+	"Use the new water splashing from Ring Racers..",
 	"Options for Saturn specific HUD things.",
 	"Options for sprite distortion effects.",
 	"See the people who helped make this project possible!",
@@ -2179,6 +2187,9 @@ enum
 	op_uppercase_menu,
 	sm_nativkey,
 	sm_pisschannel,
+	sm_extraicon,
+	sm_itemstack,
+	sm_watersplash,
 	sm_hud,
 	sm_distortionmenu,
 	sm_credits,

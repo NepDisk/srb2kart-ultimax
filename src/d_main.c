@@ -1226,6 +1226,9 @@ boolean statdp; // stat display for extended player setup
 boolean nametaggfx; // Nametag stuffs
 boolean driftgaugegfx;
 
+boolean watertrailfx;
+boolean multipleitemicons;
+
 static void IdentifyVersion(void)
 {
 	const char *srb2waddir = NULL;
@@ -1665,6 +1668,15 @@ void D_SRB2Main(void)
 
 			if (W_LumpExists("SC_SM3TC"))
 				xtra_speedo_clr3 = true;
+			
+			if (W_CheckMultipleLumps("WTRLARAL","WTRLBRBL","WTRLCRCL","WTRLDRDL","WTRLEREL",\
+				"WTRLFRFL","WTRLGRGL","WTRLHRHL","WTRLIRIL","WTRLJRJL","WTRLKRKL","WTRLLRLL",\
+				"WTRLMRML", "WTRLNRNL","WTRLOROL","WTRLPRPL", NULL))
+				watertrailfx = true;
+			
+			if (W_CheckMultipleLumps("K_ITSHO2","K_ITSHO3","K_ITBAN2","K_ITBAN3","K_ITBAN4",\
+				"K_ITJAW2", NULL))
+				multipleitemicons = true;
 		}
 	}
 

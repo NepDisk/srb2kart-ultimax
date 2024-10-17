@@ -24,6 +24,8 @@
 #include "p_maputl.h"
 #include "doomstat.h" // MAXSPLITSCREENPLAYERS
 
+extern consvar_t cv_newwatersplash;
+
 #define FLOATSPEED (FRACUNIT*4)
 
 //#define VIEWHEIGHTS "41"

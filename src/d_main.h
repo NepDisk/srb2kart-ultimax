@@ -44,6 +44,8 @@ extern boolean kartzspeedo; // kartZ speedo
 extern boolean statdp; // stat display for extended player setup
 extern boolean nametaggfx; // Nametag stuffs
 extern boolean driftgaugegfx;
+extern boolean watertrailfx;
+extern boolean multipleitemicons;
 
 void D_AddAutoloadFiles(void);
 
