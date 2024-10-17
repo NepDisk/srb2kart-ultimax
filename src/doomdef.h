@@ -128,11 +128,11 @@ extern char  logfilename[1024];
 #define VERSION    1 // Game version
 #define SUBVERSION 33 // more precise version number
 #ifndef USE_FBO_OGL
-#define VERSIONSTRING "Ultimax 2.0 "
-#define VERSIONSTRINGW L"Ultimax 2.0"
+#define VERSIONSTRING "Ultimax 1.2 "
+#define VERSIONSTRINGW L"Ultimax 1.2"
 #else
-#define VERSIONSTRING "Ultimax 2.0 - FBO "
-#define VERSIONSTRINGW L"Ultimax 2.0 - FBO"
+#define VERSIONSTRING "Ultimax 1.2 - FBO "
+#define VERSIONSTRINGW L"Ultimax 1.2 - FBO"
 #endif
 
 // Hey! If you change this, add 1 to the MODVERSION below! Otherwise we can't force updates!
