@@ -14,7 +14,9 @@
 ///        Functions to blit a block to the screen.
 
 #include "doomdef.h"
+#include "d_main.h"
 #include "r_local.h"
+#include "p_local.h"
 #include "v_video.h"
 #include "hu_stuff.h"
 #include "r_draw.h"
@@ -130,6 +132,9 @@ static boolean InitCube(void)
 	float desatur[3]; // grey
 	float globalgammamul, globalgammaoffs;
 	boolean doinggamma;
+
+	if (loaded_config == false)
+		return false;
 
 #define diffcons(cv) (cv.value != atoi(cv.defaultvalue))
 
@@ -523,7 +528,7 @@ const char *GetPalette(void)
 	return "PLAYPAL";
 }
 
-static void LoadMapPalette(void)
+void V_ReloadPalette(void)
 {
 	LoadPalette(GetPalette());
 }
@@ -535,7 +540,7 @@ static void LoadMapPalette(void)
 void V_SetPalette(INT32 palettenum)
 {
 	if (!pLocalPalette)
-		LoadMapPalette();
+		V_ReloadPalette();
 
 #ifdef HWRENDER
 	if (rendermode == render_opengl)
@@ -567,8 +572,10 @@ void V_SetPaletteLump(const char *pal)
 
 static void CV_palette_OnChange(void)
 {
+	if (loaded_config == false)
+		return;
 	// reload palette
-	LoadMapPalette();
+	V_ReloadPalette();
 	V_SetPalette(0);
 }
 
@@ -1604,21 +1611,19 @@ void V_DrawFadeScreen(UINT16 color, UINT8 strength)
     }
 #endif
 
-    {
-        const UINT8 *fadetable =
-			(color > 0xFFF0) // Grab a specific colormap palette?
-			? R_GetTranslationColormap(color | 0xFFFF0000, strength, GTC_CACHE)
-			: ((color & 0xFF00) // Color is not palette index?
-			? ((UINT8 *)colormaps + strength*256) // Do COLORMAP fade.
-			: ((UINT8 *)transtables + ((9-strength)<<FF_TRANSSHIFT) + color*256)); // Else, do TRANSMAP** fade.
-        const UINT8 *deststop = screens[0] + vid.rowbytes * vid.height;
-        UINT8 *buf = screens[0];
+	const UINT8 *fadetable =
+		(color > 0xFFF0) // Grab a specific colormap palette?
+		? R_GetTranslationColormap(color | 0xFFFF0000, strength, GTC_CACHE)
+		: ((color & 0xFF00) // Color is not palette index?
+		? ((UINT8 *)colormaps + strength*256) // Do COLORMAP fade.
+		: ((UINT8 *)transtables + ((9-strength)<<FF_TRANSSHIFT) + color*256)); // Else, do TRANSMAP** fade.
+	const UINT8 *deststop = screens[0] + vid.rowbytes * vid.height;
+	UINT8 *buf = screens[0];
 
-        // heavily simplified -- we don't need to know x or y
-        // position when we're doing a full screen fade
-        for (; buf < deststop; ++buf)
-            *buf = fadetable[*buf];
-    }
+	// heavily simplified -- we don't need to know x or y
+	// position when we're doing a full screen fade
+	for (; buf < deststop; ++buf)
+		*buf = fadetable[*buf];
 }
 
 // Simple translucency with one color, over a set number of lines starting from the top.
@@ -3242,7 +3247,7 @@ INT32 heatindex[MAXSPLITSCREENPLAYERS] = {0, 0, 0, 0};
 //
 // Perform a particular image postprocessing function.
 //
-#include "p_local.h"
+
 void V_DoPostProcessor(INT32 view, postimg_t type, INT32 param)
 {
 #if NUMSCREENS < 5
@@ -3310,8 +3315,8 @@ void V_DoPostProcessor(INT32 view, postimg_t type, INT32 param)
 				}
 			}
 
-/*
-Unoptimized version
+			/*
+			Unoptimized version
 			for (x = 0; x < vid.width*vid.bpp; x++)
 			{
 				newpix = (x + sine);
@@ -3472,8 +3477,6 @@ void V_Init(void)
 	INT32 i;
 	UINT8 *base = vid.buffer;
 	const INT32 screensize = vid.rowbytes * vid.height;
-
-	LoadMapPalette();
 
 	for (i = 0; i < NUMSCREENS; i++)
 		screens[i] = NULL;
